@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="&amp;#36;file.fileName - &amp;#36;file.className&#10;&#10;Created on &amp;#36;today.format(&quot;dd/MM/yyyy HH:mm:ss&quot;) by &amp;#36;username&#10;&#10;Copyright (c) &amp;#36;originalComment.match(&quot;Copyright \(c\) (\d+)&quot;, 1, &quot;-&quot;, &quot;&amp;#36;today.year&quot;)&amp;#36;today.year. &amp;#36;username (https://loule.me) &amp;amp; CodingFactory (https://codingfactory.fr) @ All rights reserved." />
+    <option name="myName" value="CodingFactory" />
+  </copyright>
+</component>

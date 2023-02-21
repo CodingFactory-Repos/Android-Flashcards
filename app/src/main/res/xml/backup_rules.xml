@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+  ~ backup_rules.xml - backup_rules.xml
+  ~
+  ~ Created on 21/02/2023 14:59:37 by loule
+  ~
+  ~ Copyright (c) 2023. loule (https://loule.me) & CodingFactory (https://codingfactory.fr) @ All rights reserved.
+  -->
+
+<!--
    Sample backup rules file; uncomment and customize as necessary.
    See https://developer.android.com/guide/topics/data/autobackup
    for details.

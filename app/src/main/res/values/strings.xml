@@ -1,3 +1,11 @@
+<!--
+  ~ strings.xml - strings.xml
+  ~
+  ~ Created on 21/02/2023 14:59:28 by loule
+  ~
+  ~ Copyright (c) 2023. loule (https://loule.me) & CodingFactory (https://codingfactory.fr) @ All rights reserved.
+  -->
+
 <resources>
     <string name="app_name">VroomCards</string>
 </resources>

@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ ic_launcher_background.xml - ic_launcher_background.xml
+  ~
+  ~ Created on 21/02/2023 14:58:54 by loule
+  ~
+  ~ Copyright (c) 2023. loule (https://loule.me) & CodingFactory (https://codingfactory.fr) @ All rights reserved.
+  -->
+
 <vector
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:height="108dp"
