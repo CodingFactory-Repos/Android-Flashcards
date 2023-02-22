@@ -11,7 +11,14 @@ package me.loule.vroomcards.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -28,6 +35,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
 
         loadQuestionsFromApi();
 
@@ -48,7 +56,21 @@ public class GameActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 assert response.body() != null;
                 String body = response.body().string();
-                Log.i("Response", "onResponse: " + body);
+//                Log.i("Response", "onResponse: " + body);
+                try {
+                    JSONObject jsonObject = new JSONObject(body);
+                    String question = jsonObject.getString("question");
+                    String image = jsonObject.getString("image");
+
+                    Handler handler = new Handler(getMainLooper());
+                    handler.post(() -> {
+                        ImageView carImageView = findViewById(R.id.imageView);
+                        Picasso.get().load(image).into(carImageView);
+                    });
+
+                } catch (JSONException e) {
+                    Log.e("Error", "onErrorResponse: ", e);
+                }
             }
         });
     }
