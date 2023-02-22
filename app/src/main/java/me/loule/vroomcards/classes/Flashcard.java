@@ -20,12 +20,40 @@ public class Flashcard implements Parcelable {
     private final int difficulty;
     private final List<Answer> answers;
 
+    public Flashcard(int id, String question, String image, int difficulty, List<Answer> answers) {
+        this.id = id;
+        this.question = question;
+        this.image = image;
+        this.difficulty = difficulty;
+        this.answers = answers;
+    }
+
     protected Flashcard(Parcel in) {
         id = in.readInt();
         question = in.readString();
         image = in.readString();
         difficulty = in.readInt();
         answers = in.createTypedArrayList(Answer.CREATOR);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override

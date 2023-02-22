@@ -13,6 +13,7 @@ import android.os.Parcelable;
 
 public class Answer implements Parcelable {
     private final String answer;
+
     private final boolean result;
 
     public Answer(String answer, boolean result) {
@@ -23,6 +24,14 @@ public class Answer implements Parcelable {
     protected Answer(Parcel in) {
         answer = in.readString();
         result = in.readByte() != 0;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public boolean isResult() {
+        return result;
     }
 
     @Override

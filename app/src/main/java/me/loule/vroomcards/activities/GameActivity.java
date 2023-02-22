@@ -11,16 +11,14 @@ package me.loule.vroomcards.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import me.loule.vroomcards.classes.Answer;
+import me.loule.vroomcards.classes.Flashcard;
 
 import java.io.IOException;
+import java.util.*;
 
 import me.loule.vroomcards.R;
 import okhttp3.Call;
@@ -31,20 +29,24 @@ import okhttp3.Response;
 
 public class GameActivity extends AppCompatActivity {
 
+    private List<Flashcard> questions = new ArrayList<>();
+
+    private static final String TAG = "GameActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        int difficulty = 0;
 
-        loadQuestionsFromApi();
-
+        loadQuestionsFromApi(difficulty);
     }
-    private void loadQuestionsFromApi() {
-        OkHttpClient client = new OkHttpClient();
 
+    private void loadQuestionsFromApi(int difficulty) {
+        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://flint-tar-shovel.glitch.me/cars/1")
+                .url("https://flint-tar-shovel.glitch.me/cars")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -57,21 +59,18 @@ public class GameActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 assert response.body() != null;
                 String body = response.body().string();
-//                Log.i("Response", "onResponse: " + body);
-                try {
-                    JSONObject jsonObject = new JSONObject(body);
-                    String question = jsonObject.getString("question");
-                    String image = jsonObject.getString("image");
+                Gson gson = new Gson();
 
-                    Handler handler = new Handler(getMainLooper());
-                    handler.post(() -> {
-                        ImageView carImageView = findViewById(R.id.imageView);
-                        Picasso.get().load(image).into(carImageView);
-                    });
-
-                } catch (JSONException e) {
-                    Log.e("Error", "onErrorResponse: ", e);
+                for (Flashcard question : gson.fromJson(body, Flashcard[].class)) {
+                    if (question.getDifficulty() == difficulty) {
+                        questions.add(question);
+                    }
                 }
+
+                Collections.shuffle(questions);
+                questions = questions.subList(0, 3);
+
+                Log.i(TAG, "onResponse: " + questions.size() + " questions loaded : \n" + questions.get(0).getAnswers().get(0).getAnswer() + "\n" + questions.get(1).getAnswers().get(0).getAnswer() + "\n" + questions.get(2).getAnswers().get(0).getAnswer());
             }
         });
     }
