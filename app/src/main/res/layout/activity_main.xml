@@ -24,64 +24,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/difficultyRadioGroup"
-        android:layout_width="250dp"
-        android:layout_height="220dp"
-        android:background="#2196F3"
-        android:translationZ="999dp"
-        app:layout_constraintBottom_toBottomOf="@+id/quizButton"
-        app:layout_constraintEnd_toEndOf="@+id/quizButton"
-        app:layout_constraintStart_toStartOf="@+id/quizButton"
-        app:layout_constraintTop_toTopOf="@+id/quizButton">
-
-        <RadioButton
-            android:id="@+id/easyRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:paddingStart="50dp"
-            android:text="Facile"
-            android:textSize="18sp" />
-
-        <RadioButton
-            android:id="@+id/mediumRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:paddingStart="50dp"
-            android:text="Moyen"
-            android:textSize="18sp" />
-
-        <RadioButton
-            android:id="@+id/hardRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:paddingStart="50dp"
-            android:text="Difficile"
-            android:textSize="18sp" />
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/difficultyButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="difficulté"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vroomCardsTextView" />
-
     <Button
         android:id="@+id/quizButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Démarer le quiz"
         app:layout_constraintBottom_toTopOf="@+id/questionsButton"
-        app:layout_constraintEnd_toEndOf="@+id/difficultyButton"
-        app:layout_constraintStart_toStartOf="@+id/difficultyButton"
-        app:layout_constraintTop_toBottomOf="@+id/difficultyButton" />
+        app:layout_constraintEnd_toEndOf="@+id/vroomCardsTextView"
+        app:layout_constraintStart_toStartOf="@+id/vroomCardsTextView"
+        app:layout_constraintTop_toBottomOf="@+id/vroomCardsTextView" />
 
     <Button
         android:id="@+id/questionsButton"
@@ -113,16 +64,5 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView2"
         app:layout_constraintStart_toStartOf="@+id/imageView2"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-    <ImageView
-        android:id="@+id/difficultyCloseImageView"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:translationZ="999dp"
-        app:layout_constraintEnd_toEndOf="@+id/difficultyRadioGroup"
-        app:layout_constraintTop_toTopOf="@+id/difficultyRadioGroup"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

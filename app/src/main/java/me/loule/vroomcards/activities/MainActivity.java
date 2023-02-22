@@ -8,8 +8,11 @@
 
 package me.loule.vroomcards.activities;
 
+import androidx.annotation.MainThread;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,49 +26,49 @@ import me.loule.vroomcards.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    String selectedDifficulty = "Facile";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RadioGroup difficultyRadioGroup = findViewById(R.id.difficultyRadioGroup);
-        ImageView difficultyCloseImageView = findViewById(R.id.difficultyCloseImageView);
-        difficultyCloseImageView.setVisibility(View.INVISIBLE);
-        difficultyRadioGroup.setVisibility(View.INVISIBLE);
-        Button difficultyButton = findViewById(R.id.difficultyButton);
         Button quizButton = findViewById(R.id.quizButton);
         Button questionsButton = findViewById(R.id.questionsButton);
         Button aboutButton = findViewById(R.id.aboutButton);
 
-        difficultyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                difficultyRadioGroup.setVisibility(View.VISIBLE);
-                difficultyCloseImageView.setVisibility(View.VISIBLE);
-            }
-        });
-
-        difficultyRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = findViewById(checkedId);
-                Toast.makeText(MainActivity.this, "La difficulté choisie est : " + radioButton.getText(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        difficultyCloseImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                difficultyRadioGroup.setVisibility(View.INVISIBLE);
-                difficultyCloseImageView.setVisibility(View.INVISIBLE);
-            }
-        });
-
         quizButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                startActivity(intent);
+                showOptionsDialog();
+            }
+
+            private void showOptionsDialog() {
+                final String[] difficulty = {"Facile","Moyen", "Difficile"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Choisissez une difficultée :");
+                builder.setSingleChoiceItems(difficulty, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedDifficulty = difficulty[which];
+                        Toast.makeText(MainActivity.this, "La difficulté choisie est :" + selectedDifficulty, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setPositiveButton("Jouer", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
             }
         });
 
