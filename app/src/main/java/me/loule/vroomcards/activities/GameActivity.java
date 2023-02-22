@@ -46,6 +46,7 @@ public class GameActivity extends AppCompatActivity {
         Request request = new Request.Builder()
                 .url("https://flint-tar-shovel.glitch.me/cars/1")
                 .build();
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
