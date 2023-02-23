@@ -33,6 +33,5 @@ public class EndGameActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 }
