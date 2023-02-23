@@ -27,6 +27,7 @@ import java.util.List;
 public class LoadingGameActivity extends AppCompatActivity {
 
     private ArrayList<Flashcard> questions = new ArrayList<>();
+    private int difficulty;
 
     private static final String TAG = "GameActivity";
 
@@ -35,52 +36,51 @@ public class LoadingGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_game);
 
-        int difficulty = getIntent().getIntExtra("difficulty", 0);
+        difficulty = getIntent().getIntExtra("difficulty", 0);
 
-        loadQuestionsFromApi(difficulty);
+        loadQuestionsFromApi();
     }
 
-    private void loadQuestionsFromApi(int difficulty) {
-    OkHttpClient client = new OkHttpClient();
-    Request request = new Request.Builder()
-            .url("https://flint-tar-shovel.glitch.me/cars")
-            .build();
+    private void loadQuestionsFromApi() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("https://flint-tar-shovel.glitch.me/cars")
+                .build();
 
-    client.newCall(request).enqueue(new Callback() {
-        @Override
-        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-            Log.e("APPEL API", "onFailure", e);
-        }
-
-        @Override
-        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-            assert response.body() != null;
-            String body = response.body().string();
-            Gson gson = new Gson();
-
-            for (Flashcard question : gson.fromJson(body, Flashcard[].class)) {
-                if (question.getDifficulty() == difficulty) {
-                    questions.add(question);
-                }
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("APPEL API", "onFailure", e);
             }
 
-            Collections.shuffle(questions);
-            questions = new ArrayList<>(questions.subList(0, 3));
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                assert response.body() != null;
+                String body = response.body().string();
+                Gson gson = new Gson();
 
-            Log.i(TAG, "onResponse: " + questions.size() + " questions loaded : \n" + questions.get(0).getAnswers().get(0).getAnswer() + "\n" + questions.get(1).getAnswers().get(0).getAnswer() + "\n" + questions.get(2).getAnswers().get(0).getAnswer());
-            Handler handler = new Handler(getMainLooper());
-                                handler.post(() -> {
-                        startGameActivity();
-                                });
-
+                for (Flashcard question : gson.fromJson(body, Flashcard[].class)) {
+                    if (question.getDifficulty() == difficulty) {
+                        questions.add(question);
                     }
-    });
-}
+                }
+
+                Collections.shuffle(questions);
+                questions = new ArrayList<>(questions.subList(0, 3));
+                Handler handler = new Handler(getMainLooper());
+                handler.post(() -> {
+                    startGameActivity();
+                });
+            }
+        });
+    }
 
     private void startGameActivity() {
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("questions", questions);
+        intent.putExtra("difficulty", difficulty);
         startActivity(intent);
+        finish();
     }
 }
 
