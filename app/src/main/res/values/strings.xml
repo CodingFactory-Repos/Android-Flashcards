@@ -8,4 +8,5 @@
 
 <resources>
     <string name="app_name">VroomCards</string>
+    <string name="it_will_be_our_image_for_game">It will be our image for game</string>
 </resources>
