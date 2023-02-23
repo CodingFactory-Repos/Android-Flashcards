@@ -17,6 +17,6 @@ public class EndGameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_end_game); 
+        setContentView(R.layout.activity_end_game);
     }
 }
