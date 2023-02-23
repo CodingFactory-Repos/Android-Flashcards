@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ ids.xml - ids.xml
+  ~
+  ~ Created on 22/02/2023 14:27:35 by HP
+  ~
+  ~ Copyright (c) 2023. HP (https://loule.me) & CodingFactory (https://codingfactory.fr) @ All rights reserved.
+  -->
+
+<resources>
+    <item name="VersionText" type="id" />
+    <item name="lefevre_g" type="id" />
+</resources>
