@@ -27,15 +27,13 @@ import java.util.Collections;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "GameActivity";
     private static boolean isAnswered = false;
-    private static int currentQuestion = 0;
-    private static int correctQuestion = 0;
+    private static int currentQuestion, correctQuestion;
     private ArrayList<Flashcard> questions;
 
     private ImageView questionImageView;
-    private TextView questionTextView;
+    private TextView questionTextView, resultTextView;
     private RadioGroup radioGroup;
     private Button nextAndCheckQuestionButton;
-    private TextView resultTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
