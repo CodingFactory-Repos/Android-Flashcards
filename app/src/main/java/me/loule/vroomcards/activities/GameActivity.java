@@ -9,6 +9,7 @@
 package me.loule.vroomcards.activities;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,21 +27,26 @@ import java.util.Collections;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "GameActivity";
     private static boolean isAnswered = false;
-    private static int currentQuestion = 0;
-    private static int correctQuestion = 0;
+    private static int currentQuestion, correctQuestion;
     private ArrayList<Flashcard> questions;
 
     private ImageView questionImageView;
-    private TextView questionTextView;
+    private TextView questionTextView, resultTextView;
     private RadioGroup radioGroup;
     private Button nextAndCheckQuestionButton;
-    private TextView resultTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        initializeActivity();
+
+        nextAndCheckQuestionButton.setOnClickListener(this);
+        loadGameData(questions.get(currentQuestion));
+    }
+
+    private void initializeActivity() {
         questionImageView = findViewById(R.id.questionImageView);
         questionTextView = findViewById(R.id.questionTextView);
         radioGroup = findViewById(R.id.questionRadioGroup);
@@ -49,8 +55,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         // get the parcelable arraylist from intent
         questions = getIntent().getParcelableArrayListExtra("questions");
-        nextAndCheckQuestionButton.setOnClickListener(this);
-        loadGameData(questions.get(currentQuestion));
+
+        isAnswered = false;
+        currentQuestion = 0;
+        correctQuestion = 0;
     }
 
     private void loadGameData(Flashcard q) {
@@ -72,7 +80,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+        if (radioGroup.getCheckedRadioButtonId() != -1) {
+            switch (v.getId()) {
             case R.id.questionnextAndCheckQuestionButton:
                 // if answered and there are more questions to be asked
                 if (isAnswered && currentQuestion < questions.size() - 1) {
@@ -92,6 +101,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 isAnswered = !isAnswered;
                 break;
         }
+        } else {
+            Toast.makeText(this, "Veuillez sélectionner une réponse", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void checkQuestion() {
@@ -108,11 +120,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         String answer = radioButton.getText().toString();
         Answer q = questions.get(currentQuestion).getAnswers().get(index);
 
+        Answer correct_q = null;
+        for (Answer a : questions.get(currentQuestion).getAnswers()) {
+            if (a.isCorrect()) {
+                correct_q = a;
+                break;
+            }
+        }
+
         if (q.isCorrect()) {
             resultTextView.setText("Bonne réponse !");
             correctQuestion++;
         } else {
-            resultTextView.setText("Mauvaise réponse ! La bonne réponse était " + q.getAnswer());
+            resultTextView.setText("Mauvaise réponse ! La bonne réponse était " + correct_q.getAnswer());
         }
 
         // enable the button
