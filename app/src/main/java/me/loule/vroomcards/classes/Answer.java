@@ -30,7 +30,7 @@ public class Answer implements Parcelable {
         return answer;
     }
 
-    public boolean isResult() {
+    public boolean isCorrect() {
         return result;
     }
 
