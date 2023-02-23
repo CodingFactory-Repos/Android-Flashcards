@@ -9,7 +9,6 @@
 package me.loule.vroomcards.activities;
 
 import android.util.Log;
-import androidx.annotation.MainThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,11 +17,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import me.loule.vroomcards.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button quizButton = findViewById(R.id.quizButton);
-        Button questionsButton = findViewById(R.id.questionsButton);
+        FloatingActionButton quizButton = findViewById(R.id.quizButton);
+        FloatingActionButton questionsButton = findViewById(R.id.questionsButton);
         Button aboutButton = findViewById(R.id.aboutButton);
 
         quizButton.setOnClickListener(new View.OnClickListener() {
