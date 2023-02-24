@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import me.loule.vroomcards.R;
+import nl.dionsegijn.konfetti.KonfettiView;
 
 public class MainActivity extends AppCompatActivity {
 

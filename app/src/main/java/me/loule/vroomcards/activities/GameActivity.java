@@ -14,16 +14,19 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.graphics.Color;
 
 import com.squareup.picasso.Picasso;
 import me.loule.vroomcards.R;
 import me.loule.vroomcards.classes.Answer;
 import me.loule.vroomcards.classes.Flashcard;
+import me.loule.vroomcards.dialogs.BottomResultDialog;
+import nl.dionsegijn.konfetti.KonfettiView;
+import nl.dionsegijn.konfetti.models.Shape;
+import nl.dionsegijn.konfetti.models.Size;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,7 +61,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private void initializeActivity() {
@@ -66,7 +68,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         questionTextView = findViewById(R.id.questionTextView);
         radioGroup = findViewById(R.id.questionRadioGroup);
         nextAndCheckQuestionButton = findViewById(R.id.questionnextAndCheckQuestionButton);
-        resultTextView = findViewById(R.id.questionResultTextView);
 
         // get the parcelable arraylist from intent
         questions = getIntent().getParcelableArrayListExtra("questions");
@@ -77,7 +78,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         correctQuestion = 0;
     }
 
-    private void loadGameData(Flashcard                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          q) throws IOException {
+    private void loadGameData(Flashcard q) throws IOException {
 
         if (q.getRessource().getType().equals("image")) {
             Picasso.get().load(q.getRessource().getMedia()).into(questionImageView);
@@ -155,8 +156,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         // get the index of the selected radio button
         int index = radioGroup.indexOfChild(radioButton);
-        // get the selected answer
-//        String answer = radioButton.getText().toString();
         if (index >= 0) {
             Answer q = questions.get(currentQuestion).getAnswers().get(index);
 
@@ -168,15 +167,29 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
-            if (q.isCorrect()) {
-                resultTextView.setText("Bonne réponse !");
-                correctQuestion++;
-            } else {
-                resultTextView.setText("Mauvaise réponse ! La bonne réponse était " + correct_q.getAnswer());
+            boolean won = q.isCorrect();
+            correctQuestion += won ? correctQuestion + 1 : correctQuestion;
+
+            if (won) {
+                final KonfettiView viewKonfetti = findViewById(R.id.viewKonfetti);
+
+                // Set confetti to top left and right of screen during 1 seconds and then stop
+                viewKonfetti.build()
+                        .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
+                        .setDirection(0.0, 359.0)
+                        .setSpeed(1f, 5f)
+                        .setFadeOutEnabled(true)
+                        .setTimeToLive(2000L)
+                        .addShapes(Shape.RECT, Shape.CIRCLE)
+                        .addSizes(new Size(12, 5))
+                        .setPosition(-50f, viewKonfetti.getWidth() + 50f, -50f, -50f)
+                        .streamFor(300, 5000L);
             }
 
-            // enable the button
-            nextAndCheckQuestionButton.setText("Prochaine question");
+            BottomResultDialog bottomSheet = new BottomResultDialog(won, correct_q.getAnswer());
+            bottomSheet.show(getSupportFragmentManager(), "bottomSheet");
+
+            nextAndCheckQuestionButton.setText(currentQuestion < questions.size() - 1 ? "Prochaine question" : "Voir les résultats");
             nextAndCheckQuestionButton.setEnabled(true);
         }else{
             Toast.makeText(this, "Veuillez répondre à la question actuelle avant de passer à la suivante", Toast.LENGTH_SHORT).show();
@@ -190,7 +203,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             return; // taost to respond and do not reload the game data
         }
         currentQuestion++;
-        resultTextView.setText("");
         radioGroup.clearCheck();
         loadGameData(questions.get(currentQuestion));
         Log.i(TAG, "nextQuestion: " + isAnswered + "" + radioGroup.getCheckedRadioButtonId());
