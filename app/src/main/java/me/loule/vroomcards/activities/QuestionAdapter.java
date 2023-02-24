@@ -8,6 +8,7 @@
 
 package me.loule.vroomcards.activities;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,29 +18,41 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
+import com.squareup.picasso.Picasso;
+import me.loule.vroomcards.classes.Flashcard;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import me.loule.vroomcards.R;
 
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHolder> {
-    private ArrayList<Question> questions;
+    private ArrayList<Flashcard> questions;
+    private static final String TAG = "QuestionAdapter";
 
-    public QuestionAdapter(ArrayList<Question> questions) {
+    public QuestionAdapter(ArrayList<Flashcard> questions) {
         this.questions = questions;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        final ImageView difficultyColor;
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        final ImageView questionImageView;
         final TextView titleQuestionTextView;
         final TextView proposedResultTextView;
+        final View.OnClickListener onClickListener;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, View.OnClickListener onClickListener) {
             super(itemView);
-            difficultyColor = itemView.findViewById(R.id.difficultyColor);
+            questionImageView = itemView.findViewById(R.id.questionImageView);
             titleQuestionTextView = itemView.findViewById(R.id.titleQuestionTextView);
             proposedResultTextView = itemView.findViewById(R.id.proposedResultTextView);
+
+            this.onClickListener = onClickListener;
+            itemView.setOnClickListener(this.onClickListener);
+        }
+
+        @Override
+        public void onClick(View v) {
+            onClickListener.onClick(v);
         }
     }
 
@@ -50,15 +63,22 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.item_question, parent, false);
 
-        return new ViewHolder(view);
+        return new ViewHolder(view, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: " + v.getTag());
+            }
+        });
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Question question = questions.get(position);
-        holder.difficultyColor.setImageResource(question.colorId);
-        holder.titleQuestionTextView.setText(question.titleQuestion);
-        holder.proposedResultTextView.setText(question.result);
+        Flashcard question = questions.get(position);
+        Picasso.get().load(question.getImage()).into(holder.questionImageView);
+        holder.titleQuestionTextView.setText(question.getQuestion());
+        holder.proposedResultTextView.setText(question.getAnswers().stream().map(obj -> obj.getAnswer()).collect(Collectors.joining(", ")));
+
+        holder.itemView.setTag(position);
     }
 
     @Override

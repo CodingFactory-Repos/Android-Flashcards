@@ -8,6 +8,8 @@
 
 package me.loule.vroomcards.activities;
 
+import android.util.Log;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,29 +19,25 @@ import android.os.Bundle;
 import java.util.ArrayList;
 
 import me.loule.vroomcards.R;
+import me.loule.vroomcards.classes.Flashcard;
 
 public class QuestionActivity extends AppCompatActivity {
 
-    ArrayList<Question> questions = new ArrayList<>();
+    private ArrayList<Flashcard> questions;
+
+    private static final String TAG = "QuestionActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
-        for (int i = 0; i < 500; i++) {
-            questions.add(new Question("De quelle marque est cette voiture ?", "Wolswagen, Audi, peugeot", R.drawable.green ));
-            questions.add(new Question("Quelle est le modele de cette voiture ?", "Audi A1, Peugeot 308, BMW M4", R.drawable.orange ));
-            questions.add(new Question("Quelle est le moteur de cette voiture ?", "V4, V6, V8", R.drawable.red ));
-
-
-        }
+        questions = getIntent().getParcelableArrayListExtra("questions");
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         QuestionAdapter adapter = new QuestionAdapter(questions);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
     }
 }

@@ -22,7 +22,6 @@ import okhttp3.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class LoadingGameActivity extends AppCompatActivity {
 
@@ -36,7 +35,9 @@ public class LoadingGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_game);
 
-        difficulty = getIntent().getIntExtra("difficulty", 0);
+        difficulty = getIntent().getIntExtra("difficulty", 999);
+
+        Log.i(TAG, "onCreate: difficulty = " + difficulty + " (999 = all)");
 
         loadQuestionsFromApi();
     }
@@ -60,27 +61,39 @@ public class LoadingGameActivity extends AppCompatActivity {
                 Gson gson = new Gson();
 
                 for (Flashcard question : gson.fromJson(body, Flashcard[].class)) {
-                    if (question.getDifficulty() == difficulty) {
+                    if (question.getDifficulty() == difficulty || difficulty == 999) {
                         questions.add(question);
                     }
                 }
 
-                Collections.shuffle(questions);
-                questions = new ArrayList<>(questions.subList(0, 3));
                 Handler handler = new Handler(getMainLooper());
                 handler.post(() -> {
-                    startGameActivity();
+                    Intent intent;
+                    if (difficulty != 999) {
+                        Collections.shuffle(questions);
+                        questions = new ArrayList<>(questions.subList(0, 3));
+                        intent = startGameActivity();
+                    } else {
+                        intent = startQuestionActivity();
+                    }
+
+                    intent.putExtra("questions", questions);
+                    startActivity(intent);
+                    finish();
                 });
             }
         });
     }
 
-    private void startGameActivity() {
+    private Intent startQuestionActivity() {
+        Intent intent = new Intent(this, QuestionActivity.class);
+        return intent;
+    }
+
+    private Intent startGameActivity() {
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("questions", questions);
         intent.putExtra("difficulty", difficulty);
-        startActivity(intent);
-        finish();
+        return intent;
     }
 }
 
