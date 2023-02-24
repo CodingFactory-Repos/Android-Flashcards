@@ -69,29 +69,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) { //If an error occurs
             throw new RuntimeException(e); //Throw a runtime exception
         }
-        questionImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Flashcard q = questions.get(currentQuestion);
-                MediaPlayer mediaPlayer2 = new MediaPlayer();
-                if (mediaPlayer2.isPlaying() && isPlaying) {
-                    mediaPlayer2.stop();
-                    mediaPlayer2.reset();
-                    isPlaying = false;
-                } else {
-                    try {
-                        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-                        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
-                        mediaPlayer2.setDataSource(GameActivity.this, Uri.parse(q.getRessource().getMedia()));
-                        mediaPlayer2.prepare();
-                        mediaPlayer2.setVolume(0.7f, 0.7f);
-                        mediaPlayer2.start();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    isPlaying = true;
+        questionImageView.setOnClickListener(view -> {
+            Flashcard q = questions.get(currentQuestion);
+            MediaPlayer mediaPlayer2 = new MediaPlayer();
+            if (mediaPlayer2.isPlaying() && isPlaying) {
+                mediaPlayer2.stop();
+                mediaPlayer2.reset();
+                isPlaying = false;
+            } else {
+                try {
+                    AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                    int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
+                    mediaPlayer2.setDataSource(GameActivity.this, Uri.parse(q.getRessource().getMedia()));
+                    mediaPlayer2.prepare();
+                    mediaPlayer2.setVolume(0.7f, 0.7f);
+                    mediaPlayer2.start();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
+                isPlaying = true;
             }
         });
     }
