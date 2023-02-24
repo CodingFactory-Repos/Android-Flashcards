@@ -8,13 +8,15 @@
 
 package me.loule.vroomcards.activities;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.loule.vroomcards.R;
@@ -25,24 +27,52 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-
-
-        // Récupérer l'intent
-        Intent srcIntent = getIntent();
-
-        // je lis les infos qui sont dedans
-        String name = srcIntent.getStringExtra("name de l'app");
-        String groupe = srcIntent.getStringExtra("name de groupe");
-
-
-        TextView vroomCards = findViewById(R.id.vroomCards);
-        vroomCards.setText(name);
-
-        TextView lefevre_g = findViewById(R.id.lefevre_g);
-        vroomCards.setText(name);
-
+        ImageView imgLouisL = findViewById(R.id.louisLImageView);
+        ImageView imgLouisY = findViewById(R.id.louisYImageView);
+        ImageView imgVaheK = findViewById(R.id.vaheKImageVIew);
+        ImageView imgAbedA = findViewById(R.id.abedAImageView);
 
         TextView VersionEntry = findViewById(R.id.versionText);
+
+        imgLouisL.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/Loule95450"));
+                startActivity(intent);
+            }
+        });
+
+        imgLouisY.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/LouisYang95"));
+                startActivity(intent);
+            }
+        });
+
+        imgVaheK.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/VaheKri"));
+                startActivity(intent);
+            }
+        });
+
+        imgAbedA.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/Abed-Nego28"));
+                startActivity(intent);
+            }
+        });
 
         try {
             PackageManager pm = getPackageManager();

@@ -9,5 +9,5 @@
 
 <resources>
     <item name="VersionText" type="id" />
-    <item name="lefevre_g" type="id" />
+    <item name="nameGroupTextView" type="id" />
 </resources>
