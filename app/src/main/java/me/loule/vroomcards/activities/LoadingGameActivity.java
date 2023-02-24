@@ -52,6 +52,13 @@ public class LoadingGameActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e("APPEL API", "onFailure", e);
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("https://flint-tar-shovel.glitch.me/cars")
+                        .build();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
 
             @Override
