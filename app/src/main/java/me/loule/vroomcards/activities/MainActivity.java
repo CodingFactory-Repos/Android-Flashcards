@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         Button aboutButton = findViewById(R.id.aboutButton);
 
         quizButton.setOnClickListener(new View.OnClickListener() {
+
+            //Open Dialog when click to start the game to choose difficulty
             @Override
             public void onClick(View view) {
                 showOptionsDialog();
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Choisissez une difficultée :");
                 builder.setSingleChoiceItems(difficulty, 0, new DialogInterface.OnClickListener() {
-
+                // Display with a notification the level of difficulty choose
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         indexDifficulty = which;
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "La difficulté choisie est : " + selectedDifficulty, Toast.LENGTH_SHORT).show();
                     }
                 });
-
+                //When the difficulty has been chosen, click on the play button switch to the gameActivity
                 builder.setPositiveButton("Jouer", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-
+                //Click on Cancel hide the dialog
                 builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-
+        //Switch on the question page
         questionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        //Switch to AboutActivity page
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
