@@ -8,6 +8,7 @@
 
 package me.loule.vroomcards.activities;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +67,13 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         return new ViewHolder(view, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: " + v.getTag());
+                // Start the LoadingActivity with the question
+                int position = (int) v.getTag();
+
+                Intent intent = new Intent(v.getContext(), LoadingGameActivity.class);
+                intent.putExtra("difficulty", questions.get(position).getDifficulty());
+                intent.putExtra("question", questions.get(position));
+                v.getContext().startActivity(intent);
             }
         });
     }

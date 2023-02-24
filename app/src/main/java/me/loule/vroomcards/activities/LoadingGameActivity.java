@@ -27,6 +27,7 @@ public class LoadingGameActivity extends AppCompatActivity {
 
     private ArrayList<Flashcard> questions = new ArrayList<>();
     private int difficulty;
+    private Flashcard question;
 
     private static final String TAG = "GameActivity";
 
@@ -36,8 +37,7 @@ public class LoadingGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loading_game);
 
         difficulty = getIntent().getIntExtra("difficulty", 999);
-
-        Log.i(TAG, "onCreate: difficulty = " + difficulty + " (999 = all)");
+        question = getIntent().getParcelableExtra("question") != null ? (Flashcard) getIntent().getParcelableExtra("question") : null;
 
         loadQuestionsFromApi();
     }
@@ -45,7 +45,7 @@ public class LoadingGameActivity extends AppCompatActivity {
     private void loadQuestionsFromApi() {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://flint-tar-shovel.glitch.me/cars")
+                .url("https://flint-tar-shovel.glitch.me/cars" + (question != null ? "/" + question.getId() : ""))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -60,9 +60,13 @@ public class LoadingGameActivity extends AppCompatActivity {
                 String body = response.body().string();
                 Gson gson = new Gson();
 
-                for (Flashcard question : gson.fromJson(body, Flashcard[].class)) {
-                    if (question.getDifficulty() == difficulty || difficulty == 999) {
-                        questions.add(question);
+                if (question != null) {
+                    questions.add(question);
+                } else {
+                    for (Flashcard question : gson.fromJson(body, Flashcard[].class)) {
+                        if (question.getDifficulty() == difficulty || difficulty == 999) {
+                            questions.add(question);
+                        }
                     }
                 }
 
@@ -71,7 +75,9 @@ public class LoadingGameActivity extends AppCompatActivity {
                     Intent intent;
                     if (difficulty != 999) {
                         Collections.shuffle(questions);
-                        questions = new ArrayList<>(questions.subList(0, 3));
+
+                        questions = question != null ? questions : new ArrayList<>(questions.subList(0, 3));
+
                         intent = startGameActivity();
                     } else {
                         intent = startQuestionActivity();
@@ -96,4 +102,3 @@ public class LoadingGameActivity extends AppCompatActivity {
         return intent;
     }
 }
-
