@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ activity_show_image_dialog.xml - activity_show_image_dialog.xml
+  ~
+  ~ Created on 24/02/2023 17:17:33 by loule
+  ~
+  ~ Copyright (c) 2023. loule (https://loule.me) & CodingFactory (https://codingfactory.fr) @ All rights reserved.
+  -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="382dp" app:srcCompat="@drawable/ic_launcher_background"
+            android:id="@+id/showImageView"/>
+    <Button
+            android:layout_margin="10dp"
+            android:id="@+id/quitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fermer"/>
+
+</LinearLayout>
+

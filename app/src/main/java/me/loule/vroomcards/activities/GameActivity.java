@@ -24,6 +24,7 @@ import me.loule.vroomcards.R;
 import me.loule.vroomcards.classes.Answer;
 import me.loule.vroomcards.classes.Flashcard;
 import me.loule.vroomcards.dialogs.BottomResultDialog;
+import me.loule.vroomcards.dialogs.ShowImageDialog;
 import nl.dionsegijn.konfetti.KonfettiView;
 import nl.dionsegijn.konfetti.models.Shape;
 import nl.dionsegijn.konfetti.models.Size;
@@ -39,6 +40,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private static boolean isAnswered = false;
     private static int currentQuestion, correctQuestion;
     private ArrayList<Flashcard> questions;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+
 
     private int difficulty;
     private ImageView questionImageView;
@@ -47,8 +50,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Button nextAndCheckQuestionButton;
 
     private String indexQuestion;
-
-    private Boolean isPlaying = false;
 
     /**
      * @param savedInstanceState If the activity is being re-initialized after
@@ -63,34 +64,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         initializeActivity(); //Initialize the activity
 
         nextAndCheckQuestionButton.setOnClickListener(this); //Set the click listener
+        questionImageView.setOnClickListener(this); //Set the click listener
 
         try { //Load the first question
             loadGameData(questions.get(currentQuestion)); //Load the first question
         } catch (IOException e) { //If an error occurs
             throw new RuntimeException(e); //Throw a runtime exception
         }
-        questionImageView.setOnClickListener(view -> {
-            Flashcard q = questions.get(currentQuestion);
-            MediaPlayer mediaPlayer2 = new MediaPlayer();
-            if (mediaPlayer2.isPlaying() && isPlaying) {
-                mediaPlayer2.stop();
-                mediaPlayer2.reset();
-                isPlaying = false;
-            } else {
-                try {
-                    AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-                    int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
-                    mediaPlayer2.setDataSource(GameActivity.this, Uri.parse(q.getRessource().getMedia()));
-                    mediaPlayer2.prepare();
-                    mediaPlayer2.setVolume(0.7f, 0.7f);
-                    mediaPlayer2.start();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                isPlaying = true;
-            }
-        });
     }
 
     /**
@@ -113,14 +93,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         correctQuestion = 0;
     }
 
+    /**
+     * @param q The question to load
+     * @throws IOException If an error occurs
+     */
     private void loadGameData(Flashcard q) throws IOException {
         if (q.getRessource().getType().equals("image")) { //If the question is an image
             Picasso.get().load(q.getRessource().getMedia()).into(questionImageView); // Load the image
         } else if (q.getRessource().getType().equals("sound")) { //If the question is a sound
             questionImageView.setImageResource(R.drawable.play_button); //Set the image to the play button
 
-            // Create a new MediaPlayer
-            MediaPlayer mediaPlayer = new MediaPlayer();
             AudioManager audioManager = (AudioManager) getSystemService(this.AUDIO_SERVICE);
 
             // Set the volume to the max
@@ -153,33 +135,61 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onClick(View v) {
-        if (radioGroup.getCheckedRadioButtonId() != -1) { //If a RadioButton is checked
             switch (v.getId()) {
-            case R.id.questionnextAndCheckQuestionButton: //If the next and check question button is clicked
-                if (isAnswered && currentQuestion < questions.size() - 1) { //If the question is answered and the current question is less than the total number of questions
-                    try {
-                        nextQuestion(); //Load the next question
-                    } catch (IOException e) {
-                        throw new RuntimeException(e); //Throw a runtime exception
+                case R.id.questionnextAndCheckQuestionButton: //If the next and check question button is clicked
+                    if (radioGroup.getCheckedRadioButtonId() != -1) { //If a RadioButton is checked
+                        if (isAnswered && currentQuestion < questions.size() - 1) { //If the question is answered and the current question is less than the total number of questions
+                            try {
+                                nextQuestion(); //Load the next question
+                            } catch (IOException e) {
+                                throw new RuntimeException(e); //Throw a runtime exception
+                            }
+                        } else if (isAnswered && currentQuestion == questions.size() - 1) { //If the question is answered and the current question is equal to the total number of questions
+                            Intent intent = new Intent(this, EndGameActivity.class); //Create a new Intent
+                            intent.putExtra("correctQuestion", correctQuestion); //Put the number of correct questions in the Intent
+                            intent.putExtra("totalQuestion", questions.size()); //Put the total number of questions in the Intent
+
+                            startActivity(intent); //Start the activity
+
+                            finish(); //Finish the activity
+                        } else {
+                            checkQuestion(); //Check the question
+                        }
+                        isAnswered = !isAnswered; //Toggle the answer status
+                    } else { //If no RadioButton is checked
+                        Toast.makeText(this, "Veuillez sélectionner une réponse", Toast.LENGTH_SHORT).show(); //Show a Toast
                     }
-                } else if (isAnswered && currentQuestion == questions.size() - 1) { //If the question is answered and the current question is equal to the total number of questions
-                    Intent intent = new Intent(this, EndGameActivity.class); //Create a new Intent
-                    intent.putExtra("correctQuestion", correctQuestion); //Put the number of correct questions in the Intent
-                    intent.putExtra("totalQuestion", questions.size()); //Put the total number of questions in the Intent
+                    break;
 
-                    startActivity(intent); //Start the activity
+                case R.id.questionImageView:
+                    Flashcard q = questions.get(currentQuestion);
 
-                    finish(); //Finish the activity
-                } else {
-                    checkQuestion(); //Check the question
-                }
-                isAnswered = !isAnswered; //Toggle the answer status
-                break;
+                    if (q.getRessource().getType().equals("sound")) {
+                        if (mediaPlayer.isPlaying()) {
+                            mediaPlayer.stop();
+                            mediaPlayer.reset();
+                        } else {
+                            try {
+                                AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
+                                mediaPlayer.setDataSource(GameActivity.this, Uri.parse(q.getRessource().getMedia()));
+                                mediaPlayer.prepare();
+                                mediaPlayer.setVolume(0.7f, 0.7f);
+                                mediaPlayer.start();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    } else if (q.getRessource().getType().equals("image")) {
+                        ShowImageDialog showZoomedImage = new ShowImageDialog(q.getRessource().getMedia());
+                        showZoomedImage.show(getSupportFragmentManager(), "showZoomedImage");
+                    }
+                    break;
+
+            }
         }
-        } else { //If no RadioButton is checked
-            Toast.makeText(this, "Veuillez sélectionner une réponse", Toast.LENGTH_SHORT).show(); //Show a Toast
-        }
-    }
+
 
     /**
      * Check the question
@@ -207,8 +217,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
             boolean won = q.getAnswer().equals(correct_q.getAnswer()); //Check if the answer is correct
             correctQuestion = (won) ? correctQuestion + 1 : correctQuestion; //Increment the number of correct questions (ternary operator
-
-            Log.i(TAG, "checkQuestion: \n\nJE RAJOUTE 1 A CORRECT QUESTION : " + correctQuestion + "\n\n" + won + "\n\n" + q.getAnswer() + "\n\n" + correct_q.getAnswer());
 
             if (won) { //If the answer is correct
                 final KonfettiView viewKonfetti = findViewById(R.id.viewKonfetti); // Add Konfetti to the view
@@ -250,6 +258,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         currentQuestion++; //Increment the current question
         radioGroup.clearCheck(); //Clear the checked radio button
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+        }
         loadGameData(questions.get(currentQuestion)); //Load the game data
         indexQuestion = "Questions : " + (currentQuestion + 1) + "/" + questions.size(); //Set the index question
         Objects.requireNonNull(getSupportActionBar()).setSubtitle(indexQuestion); //Set the subtitle

@@ -23,6 +23,13 @@
                     android:value=""/>
         </activity>
         <activity
+                android:name="dialogs.ShowImageDialog"
+                android:exported="false">
+            <meta-data
+                    android:name="android.app.lib_name"
+                    android:value=""/>
+        </activity>
+        <activity
                 android:name="dialogs.BottomResultDialog"
                 android:exported="false">
             <meta-data
