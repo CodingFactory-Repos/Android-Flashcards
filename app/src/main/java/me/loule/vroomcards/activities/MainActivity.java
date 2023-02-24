@@ -42,11 +42,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FloatingActionButton quizButton = findViewById(R.id.quizButton);
         FloatingActionButton questionsButton = findViewById(R.id.questionsButton);
         Button aboutButton = findViewById(R.id.aboutButton);
+        Button leaderboardButton = findViewById(R.id.leaderboardButton);
 
         // Set the click listener
         quizButton.setOnClickListener(this);
         questionsButton.setOnClickListener(this);
         aboutButton.setOnClickListener(this);
+        leaderboardButton.setOnClickListener(this);
     }
 
     /**
@@ -65,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.aboutButton: // If the about button is clicked
                 intent = new Intent(MainActivity.this, AboutActivity.class); // Create a new intent to the about activity
+                startActivity(intent);
+                break;
+            case R.id.leaderboardButton: // If the leaderboard button is clicked
+                intent = new Intent(MainActivity.this, LeaderboardActivity.class); // Create a new intent to the leaderboard activity
                 startActivity(intent);
                 break;
         }

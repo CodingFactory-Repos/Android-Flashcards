@@ -62,7 +62,7 @@ public class LoadingGameActivity extends AppCompatActivity {
                 Log.e("APPEL API", "onFailure", e);
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url("https://flint-tar-shovel.glitch.me/cars")
+                        .url("https://flint-tar-shovel.glitch.me/cars" + (question != null ? "/" + question.getId() : ""))
                         .build();
                 Intent intent = getIntent();
                 finish();
