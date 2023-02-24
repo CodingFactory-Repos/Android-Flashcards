@@ -79,15 +79,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadGameData(Flashcard                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          q) throws IOException {
 
-        if (difficulty != 2){
-            Picasso.get().load(q.getImage()).into(questionImageView);
-        }else{
-            Picasso.get().load(q.getImage()).into(questionImageView);
+        if (q.getRessource().getType().equals("image")) {
+            Picasso.get().load(q.getRessource().getMedia()).into(questionImageView);
+        } else if (q.getRessource().getType().equals("sound")) {
+            questionImageView.setImageResource(R.drawable.play_button);
+
             MediaPlayer mediaPlayer = new MediaPlayer();
             AudioManager audioManager = (AudioManager) getSystemService(this.AUDIO_SERVICE);
+
             int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
-            mediaPlayer.setDataSource("https://cdn.pixabay.com/audio/2022/03/10/audio_f10a962bdc.mp3?filename=065421_nissan-skyline-gtr-brakes-38471.mp3");
+            mediaPlayer.setDataSource(this, Uri.parse(q.getRessource().getMedia()));
             mediaPlayer.prepare();
             mediaPlayer.setVolume(0.7f, 0.8f);
             mediaPlayer.start();

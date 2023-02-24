@@ -16,24 +16,24 @@ import java.util.List;
 public class Flashcard implements Parcelable {
     private final int id;
     private final String question;
-    private final String image;
+    private final Ressource ressource;
     private final int difficulty;
     private final List<Answer> answers;
-
-    public Flashcard(int id, String question, String image, int difficulty, List<Answer> answers) {
-        this.id = id;
-        this.question = question;
-        this.image = image;
-        this.difficulty = difficulty;
-        this.answers = answers;
-    }
 
     protected Flashcard(Parcel in) {
         id = in.readInt();
         question = in.readString();
-        image = in.readString();
+        ressource = in.readParcelable(Ressource.class.getClassLoader());
         difficulty = in.readInt();
         answers = in.createTypedArrayList(Answer.CREATOR);
+    }
+
+    public Flashcard(int id, String question, Ressource ressource, int difficulty, List<Answer> answers) {
+        this.id = id;
+        this.question = question;
+        this.ressource = ressource;
+        this.difficulty = difficulty;
+        this.answers = answers;
     }
 
     public int getId() {
@@ -44,8 +44,8 @@ public class Flashcard implements Parcelable {
         return question;
     }
 
-    public String getImage() {
-        return image;
+    public Ressource getRessource() {
+        return ressource;
     }
 
     public int getDifficulty() {
@@ -60,7 +60,7 @@ public class Flashcard implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(question);
-        dest.writeString(image);
+        dest.writeParcelable(ressource, flags);
         dest.writeInt(difficulty);
         dest.writeTypedList(answers);
     }

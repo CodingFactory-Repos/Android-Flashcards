@@ -81,7 +81,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Flashcard question = questions.get(position);
-        Picasso.get().load(question.getImage()).into(holder.questionImageView);
+        Picasso.get().load(question.getRessource().getMedia()).into(holder.questionImageView);
         holder.titleQuestionTextView.setText(question.getQuestion());
         holder.proposedResultTextView.setText(question.getAnswers().stream().map(obj -> obj.getAnswer()).collect(Collectors.joining(", ")));
 
