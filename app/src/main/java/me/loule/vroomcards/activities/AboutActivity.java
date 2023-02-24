@@ -31,9 +31,9 @@ public class AboutActivity extends AppCompatActivity {
         ImageView imgLouisY = findViewById(R.id.louisYImageView);
         ImageView imgVaheK = findViewById(R.id.vaheKImageVIew);
         ImageView imgAbedA = findViewById(R.id.abedAImageView);
-
         TextView VersionEntry = findViewById(R.id.versionText);
 
+        //Click Event to open github link when click on the imageView
         imgLouisL.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -43,7 +43,7 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        //Click Event to open github link when click on the imageView
         imgLouisY.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -53,7 +53,7 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        //Click Event to open github link when click on the imageView
         imgVaheK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -63,7 +63,7 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        //Click Event to open github link when click on the imageView
         imgAbedA.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -73,7 +73,7 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+            //Get version of the app dynamically
         try {
             PackageManager pm = getPackageManager();
             PackageInfo pi;
