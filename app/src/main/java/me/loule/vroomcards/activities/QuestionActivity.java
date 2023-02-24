@@ -8,8 +8,6 @@
 
 package me.loule.vroomcards.activities;
 
-import android.util.Log;
-import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,20 +22,24 @@ import me.loule.vroomcards.classes.Flashcard;
 public class QuestionActivity extends AppCompatActivity {
 
     private ArrayList<Flashcard> questions;
-
     private static final String TAG = "QuestionActivity";
 
+    /**
+     * @param savedInstanceState If the activity is being re-initialized after 
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
-        questions = getIntent().getParcelableArrayListExtra("questions");
+        questions = getIntent().getParcelableArrayListExtra("questions"); //Get the questions from the intent
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        QuestionAdapter adapter = new QuestionAdapter(questions);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView); //Get the RecyclerView
+        QuestionAdapter adapter = new QuestionAdapter(questions); //Create a new QuestionAdapter
 
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter); //Set the adapter to the RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(this)); //Set the layout manager to the RecyclerView
     }
 }

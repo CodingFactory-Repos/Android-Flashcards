@@ -21,84 +21,93 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import me.loule.vroomcards.R;
-import nl.dionsegijn.konfetti.KonfettiView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     String selectedDifficulty = "Facile";
-
     private static final String TAG = "MainActivity";
-
     private int indexDifficulty = 0;
 
+    /**
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Import all the buttons
         FloatingActionButton quizButton = findViewById(R.id.quizButton);
         FloatingActionButton questionsButton = findViewById(R.id.questionsButton);
         Button aboutButton = findViewById(R.id.aboutButton);
 
-        quizButton.setOnClickListener(new View.OnClickListener() {
+        // Set the click listener
+        quizButton.setOnClickListener(this);
+        questionsButton.setOnClickListener(this);
+        aboutButton.setOnClickListener(this);
+    }
 
-            //Open Dialog when click to start the game to choose difficulty
-            @Override
-            public void onClick(View view) {
-                showOptionsDialog();
-            }
-
-            private void showOptionsDialog() {
-                final String[] difficulty = {"Facile", "Moyen", "Difficile"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Choisissez une difficultée :");
-                builder.setSingleChoiceItems(difficulty, 0, new DialogInterface.OnClickListener() {
-                // Display with a notification the level of difficulty choose
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        indexDifficulty = which;
-                        selectedDifficulty = difficulty[which];
-                        Log.i(TAG, "onClick: " + which);
-                        Toast.makeText(MainActivity.this, "La difficulté choisie est : " + selectedDifficulty, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                //When the difficulty has been chosen, click on the play button switch to the gameActivity
-                builder.setPositiveButton("Jouer", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.i(TAG, "onClick 2 : " + indexDifficulty);
-
-                        dialog.dismiss();
-                        Intent intent = new Intent(MainActivity.this, LoadingGameActivity.class);
-                        intent.putExtra("difficulty", indexDifficulty);
-                        startActivity(intent);
-                    }
-                });
-                //Click on Cancel hide the dialog
-                builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
-            }
-        });
-        //Switch on the question page
-        questionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LoadingGameActivity.class);
+    /**
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        Intent intent; // Create a new intent
+        switch (v.getId()) {
+            case R.id.quizButton: // If the quiz button is clicked
+                showOptionsDialog(); // Show the options dialog
+                break;
+            case R.id.questionsButton: // If the questions button is clicked
+                intent = new Intent(MainActivity.this, LoadingGameActivity.class); // Create a new intent to the loading game activity
+                startActivity(intent); // Start the activity
+                break;
+            case R.id.aboutButton: // If the about button is clicked
+                intent = new Intent(MainActivity.this, AboutActivity.class); // Create a new intent to the about activity
                 startActivity(intent);
-            }
-        });
-        //Switch to AboutActivity page
-        aboutButton.setOnClickListener(new View.OnClickListener() {
+                break;
+        }
+    }
+
+    /**
+     * Show the options dialog
+     */
+    private void showOptionsDialog() {
+        final String[] difficulty = {"Facile", "Moyen", "Difficile", "Expert"}; // Create a new array of difficulty
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); // Create a new alert dialog builder
+        builder.setTitle("Choisissez une difficultée :"); // Set the title of the dialog
+
+        // Set the single choice items
+        builder.setSingleChoiceItems(difficulty, 0, new DialogInterface.OnClickListener() {
+            // Display with a notification the level of difficulty choose
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-                startActivity(intent);
+            public void onClick(DialogInterface dialog, int which) { // When an item is clicked
+                indexDifficulty = which; // Set the index of the difficulty
+                selectedDifficulty = difficulty[which]; // Set the selected difficulty
+                Toast.makeText(MainActivity.this, "La difficulté choisie est : " + selectedDifficulty, Toast.LENGTH_SHORT).show(); // Display a toast with the difficulty
             }
         });
+
+        // When the difficulty has been chosen, click on the play button switch to the gameActivity
+        builder.setPositiveButton("Jouer", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss(); // Hide the dialog
+                Intent intent = new Intent(MainActivity.this, LoadingGameActivity.class); // Create a new intent to the loading game activity
+                intent.putExtra("difficulty", indexDifficulty); // Put the difficulty in the intent
+                startActivity(intent); // Start the activity
+            }
+        });
+
+        // If the user cancel the dialog, the dialog is hidden
+        builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() { // When the cancel button is clicked
+            @Override
+            public void onClick(DialogInterface dialog, int which) { // When the cancel button is clicked
+                dialog.dismiss(); // Hide the dialog
+            }
+        });
+
+        builder.show(); // Show the dialog
     }
 }

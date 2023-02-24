@@ -49,21 +49,32 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private String indexQuestion;
 
 
+    /**
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        initializeActivity();
 
-        nextAndCheckQuestionButton.setOnClickListener(this);
-        try {
-            loadGameData(questions.get(currentQuestion));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        initializeActivity(); //Initialize the activity
+
+        nextAndCheckQuestionButton.setOnClickListener(this); //Set the click listener
+
+        try { //Load the first question
+            loadGameData(questions.get(currentQuestion)); //Load the first question
+        } catch (IOException e) { //If an error occurs
+            throw new RuntimeException(e); //Throw a runtime exception
         }
     }
 
+    /**
+     * Initialize the activity
+     */
     private void initializeActivity() {
+        // Get all required views
         questionImageView = findViewById(R.id.questionImageView);
         questionTextView = findViewById(R.id.questionTextView);
         radioGroup = findViewById(R.id.questionRadioGroup);
@@ -72,82 +83,85 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         // get the parcelable arraylist from intent
         questions = getIntent().getParcelableArrayListExtra("questions");
         difficulty = getIntent().getIntExtra("difficulty", 0);
-        Log.i(TAG, "initializeActivity: " + difficulty);
+
+        // Set variables to default values
         isAnswered = false;
         currentQuestion = 0;
         correctQuestion = 0;
     }
 
     private void loadGameData(Flashcard q) throws IOException {
+        if (q.getRessource().getType().equals("image")) { //If the question is an image
+            Picasso.get().load(q.getRessource().getMedia()).into(questionImageView); // Load the image
+        } else if (q.getRessource().getType().equals("sound")) { //If the question is a sound
+            questionImageView.setImageResource(R.drawable.play_button); //Set the image to the play button
 
-        if (q.getRessource().getType().equals("image")) {
-            Picasso.get().load(q.getRessource().getMedia()).into(questionImageView);
-        } else if (q.getRessource().getType().equals("sound")) {
-            questionImageView.setImageResource(R.drawable.play_button);
-
+            // Create a new MediaPlayer
             MediaPlayer mediaPlayer = new MediaPlayer();
             AudioManager audioManager = (AudioManager) getSystemService(this.AUDIO_SERVICE);
 
+            // Set the volume to the max
             int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
-            mediaPlayer.setDataSource(this, Uri.parse(q.getRessource().getMedia()));
-            mediaPlayer.prepare();
-            mediaPlayer.setVolume(0.7f, 0.8f);
-            mediaPlayer.start();
+            mediaPlayer.setDataSource(this, Uri.parse(q.getRessource().getMedia())); //Set the data source
+            mediaPlayer.prepare(); //Prepare the MediaPlayer
+            mediaPlayer.setVolume(0.7f, 0.8f); //Set the volume
+            mediaPlayer.start(); //Start the MediaPlayer
         }
-        questionTextView.setText(q.getQuestion());
-        // randomize the answers
-        Collections.shuffle(q.getAnswers());
-        radioGroup.removeAllViews();
 
-        // create radio button for each answer
+        questionTextView.setText(q.getQuestion()); // Set the question text
+        Collections.shuffle(q.getAnswers()); // Shuffle the answers
+        radioGroup.removeAllViews(); // Remove all views from the RadioGroup
+
+        // Add a RadioButton for each answer
         for (int i = 0; i < q.getAnswers().size(); i++) {
             radioGroup.addView(new RadioButton(this));
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
             radioButton.setText(q.getAnswers().get(i).getAnswer());
         }
 
-        radioGroup.setVisibility(View.VISIBLE);
-        indexQuestion = "Questions : " + (currentQuestion + 1) + "/" + questions.size();
-        Objects.requireNonNull(getSupportActionBar()).setSubtitle(indexQuestion);
-
-        Log.i(TAG, "loadGameData: " + indexQuestion);
+        radioGroup.setVisibility(View.VISIBLE); //Set the RadioGroup to visible
+        indexQuestion = "Questions : " + (currentQuestion + 1) + "/" + questions.size(); //Set the index question
+        Objects.requireNonNull(getSupportActionBar()).setSubtitle(indexQuestion); //Set the subtitle
     }
 
+    /**
+     * @param v The view that was clicked.
+     */
     @Override
     public void onClick(View v) {
-        Log.i(TAG, "nextQuestion: " + isAnswered + "" + radioGroup.getCheckedRadioButtonId());
-        if (radioGroup.getCheckedRadioButtonId() != -1) {
+        if (radioGroup.getCheckedRadioButtonId() != -1) { //If a RadioButton is checked
             switch (v.getId()) {
-            case R.id.questionnextAndCheckQuestionButton:
-                // if answered and there are more questions to be asked
-                if (isAnswered && currentQuestion < questions.size() - 1) {
+            case R.id.questionnextAndCheckQuestionButton: //If the next and check question button is clicked
+                if (isAnswered && currentQuestion < questions.size() - 1) { //If the question is answered and the current question is less than the total number of questions
                     try {
-                        nextQuestion();
+                        nextQuestion(); //Load the next question
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeException(e); //Throw a runtime exception
                     }
-                } else if (isAnswered && currentQuestion == questions.size() - 1) {
-                    Intent intent = new Intent(this, EndGameActivity.class);
-                    intent.putExtra("correctQuestion", correctQuestion);
-                    intent.putExtra("totalQuestion", questions.size());
-                    startActivity(intent);
+                } else if (isAnswered && currentQuestion == questions.size() - 1) { //If the question is answered and the current question is equal to the total number of questions
+                    Intent intent = new Intent(this, EndGameActivity.class); //Create a new Intent
+                    intent.putExtra("correctQuestion", correctQuestion); //Put the number of correct questions in the Intent
+                    intent.putExtra("totalQuestion", questions.size()); //Put the total number of questions in the Intent
+                    startActivity(intent); //Start the activity
 
-                    finish();
+                    finish(); //Finish the activity
                 } else {
-                        checkQuestion();
+                    checkQuestion(); //Check the question
                 }
-                // toggle answer status
-                isAnswered = !isAnswered;
+                isAnswered = !isAnswered; //Toggle the answer status
                 break;
         }
-        } else {
-            Toast.makeText(this, "Veuillez sélectionner une réponse", Toast.LENGTH_SHORT).show();
+        } else { //If no RadioButton is checked
+            Toast.makeText(this, "Veuillez sélectionner une réponse", Toast.LENGTH_SHORT).show(); //Show a Toast
         }
     }
 
+    /**
+     * Check the question
+     */
     private void checkQuestion() {
-        // disable the button
+        // disable the button and hide the radio group
         nextAndCheckQuestionButton.setEnabled(false);
         radioGroup.setVisibility(View.INVISIBLE);
 
@@ -156,22 +170,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         // get the index of the selected radio button
         int index = radioGroup.indexOfChild(radioButton);
-        if (index >= 0) {
-            Answer q = questions.get(currentQuestion).getAnswers().get(index);
+        if (index >= 0) { //If the index is greater than or equal to 0
+            Answer q = questions.get(currentQuestion).getAnswers().get(index); //Get the answer
 
-            Answer correct_q = null;
-            for (Answer a : questions.get(currentQuestion).getAnswers()) {
-                if (a.isCorrect()) {
-                    correct_q = a;
+            Answer correct_q = null; //Create a new Answer
+            for (Answer a : questions.get(currentQuestion).getAnswers()) {  //For each answer
+                if (a.isCorrect()) { //If the answer is correct
+                    correct_q = a; //Set the correct answer
                     break;
                 }
             }
 
-            boolean won = q.isCorrect();
-            correctQuestion += won ? correctQuestion + 1 : correctQuestion;
+            boolean won = q.isCorrect(); //Check if the answer is correct
+            correctQuestion += won ? correctQuestion + 1 : correctQuestion; //Add 1 to the number of correct questions if the answer is correct
 
-            if (won) {
-                final KonfettiView viewKonfetti = findViewById(R.id.viewKonfetti);
+            if (won) { //If the answer is correct
+                final KonfettiView viewKonfetti = findViewById(R.id.viewKonfetti); // Add Konfetti to the view
 
                 // Set confetti to top left and right of screen during 1 seconds and then stop
                 viewKonfetti.build()
@@ -186,28 +200,32 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         .streamFor(300, 5000L);
             }
 
-            BottomResultDialog bottomSheet = new BottomResultDialog(won, correct_q.getAnswer());
-            bottomSheet.show(getSupportFragmentManager(), "bottomSheet");
+            BottomResultDialog bottomSheet = new BottomResultDialog(won, correct_q.getAnswer()); //Create a new BottomResultDialog
+            bottomSheet.show(getSupportFragmentManager(), "bottomSheet"); //Show the BottomResultDialog
 
-            nextAndCheckQuestionButton.setText(currentQuestion < questions.size() - 1 ? "Prochaine question" : "Voir les résultats");
-            nextAndCheckQuestionButton.setEnabled(true);
-        }else{
-            Toast.makeText(this, "Veuillez répondre à la question actuelle avant de passer à la suivante", Toast.LENGTH_SHORT).show();
+            nextAndCheckQuestionButton.setText(currentQuestion < questions.size() - 1 ? "Prochaine question" : "Voir les résultats"); //Set the text of the next and check question button
+            nextAndCheckQuestionButton.setEnabled(true); //Enable the next and check question button
+        } else { //If the index is less than 0
+            Toast.makeText(this, "Veuillez répondre à la question actuelle avant de passer à la suivante", Toast.LENGTH_SHORT).show(); //Show a Toast
         }
     }
 
-    private void nextQuestion() throws IOException {
+    /**
+     * Load the next question
+     *
+     * @throws IOException If an I/O error occurs
+     */
+    private void nextQuestion() throws IOException { // load the next question
+        // Verify if the user did select an answer
         if (radioGroup.getCheckedRadioButtonId() == -1) {
-            // Verify if the user did select an answer
             Toast.makeText(this, "Veuillez répondre à la question actuelle avant de passer à la suivante", Toast.LENGTH_SHORT).show();
             return; // taost to respond and do not reload the game data
         }
-        currentQuestion++;
-        radioGroup.clearCheck();
-        loadGameData(questions.get(currentQuestion));
-        Log.i(TAG, "nextQuestion: " + isAnswered + "" + radioGroup.getCheckedRadioButtonId());
-        indexQuestion = "Questions : " + (currentQuestion + 1) + "/" + questions.size();
-        Objects.requireNonNull(getSupportActionBar()).setSubtitle(indexQuestion);
 
+        currentQuestion++; //Increment the current question
+        radioGroup.clearCheck(); //Clear the checked radio button
+        loadGameData(questions.get(currentQuestion)); //Load the game data
+        indexQuestion = "Questions : " + (currentQuestion + 1) + "/" + questions.size(); //Set the index question
+        Objects.requireNonNull(getSupportActionBar()).setSubtitle(indexQuestion); //Set the subtitle
     }
 }
