@@ -1,15 +1,24 @@
 /*
  * AboutActivity.java - AboutActivity
  *
- * Created on 21/02/2023 15:35:23 by loule
+ * Created on 23/02/2023 16:02:45 by vahekrikorian
  *
- * Copyright (c) 2023. loule (https://loule.me) & CodingFactory (https://codingfactory.fr) @ All rights reserved.
+ * Copyright (c) 2023. vahekrikorian (https://loule.me) & CodingFactory (https://codingfactory.fr) @ All rights reserved.
  */
 
 package me.loule.vroomcards.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import me.loule.vroomcards.R;
 
 public class AboutActivity extends AppCompatActivity {
@@ -18,5 +27,61 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        ImageView imgLouisL = findViewById(R.id.louisLImageView);
+        ImageView imgLouisY = findViewById(R.id.louisYImageView);
+        ImageView imgVaheK = findViewById(R.id.vaheKImageVIew);
+        ImageView imgAbedA = findViewById(R.id.abedAImageView);
+
+        TextView VersionEntry = findViewById(R.id.versionText);
+
+        imgLouisL.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/Loule95450"));
+                startActivity(intent);
+            }
+        });
+
+        imgLouisY.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/LouisYang95"));
+                startActivity(intent);
+            }
+        });
+
+        imgVaheK.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/VaheKri"));
+                startActivity(intent);
+            }
+        });
+
+        imgAbedA.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://github.com/Abed-Nego28"));
+                startActivity(intent);
+            }
+        });
+
+        try {
+            PackageManager pm = getPackageManager();
+            PackageInfo pi;
+            // Version
+            pi = pm.getPackageInfo(getPackageName(), 0);
+            VersionEntry.setText(pi.versionName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
