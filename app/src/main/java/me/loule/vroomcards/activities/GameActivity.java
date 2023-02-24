@@ -166,6 +166,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     Intent intent = new Intent(this, EndGameActivity.class); //Create a new Intent
                     intent.putExtra("correctQuestion", correctQuestion); //Put the number of correct questions in the Intent
                     intent.putExtra("totalQuestion", questions.size()); //Put the total number of questions in the Intent
+
                     startActivity(intent); //Start the activity
 
                     finish(); //Finish the activity
@@ -204,8 +205,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
-            boolean won = q.isCorrect(); //Check if the answer is correct
-            correctQuestion += won ? correctQuestion + 1 : correctQuestion; //Add 1 to the number of correct questions if the answer is correct
+            boolean won = q.getAnswer().equals(correct_q.getAnswer()); //Check if the answer is correct
+            correctQuestion = (won) ? correctQuestion + 1 : correctQuestion; //Increment the number of correct questions (ternary operator
+
+            Log.i(TAG, "checkQuestion: \n\nJE RAJOUTE 1 A CORRECT QUESTION : " + correctQuestion + "\n\n" + won + "\n\n" + q.getAnswer() + "\n\n" + correct_q.getAnswer());
 
             if (won) { //If the answer is correct
                 final KonfettiView viewKonfetti = findViewById(R.id.viewKonfetti); // Add Konfetti to the view
