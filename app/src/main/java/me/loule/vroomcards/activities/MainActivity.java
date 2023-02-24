@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         questionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, QuestionActivity.class);
+                Intent intent = new Intent(MainActivity.this, LoadingGameActivity.class);
                 startActivity(intent);
             }
         });
